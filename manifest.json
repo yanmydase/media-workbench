@@ -1,0 +1,24 @@
+{
+    "name": "小小花狮 · 个人工作台",
+    "short_name": "小小花狮",
+    "description": "每日计划、运动健身、英语学习、每日复盘、随笔笔记、收入记账、天气，以及 DeepSeek 驱动的智能体工作台。",
+    "start_url": "/#/",
+    "scope": "/",
+    "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "background_color": "#f0f2f5",
+    "theme_color": "#6C5CE7",
+    "orientation": "any",
+    "lang": "zh-CN",
+    "categories": ["productivity", "lifestyle", "education"],
+    "icons": [
+        { "src": "/icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icon.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+        { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    ],
+    "shortcuts": [
+        { "name": "今日打卡", "short_name": "打卡", "url": "/#/plan", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+        { "name": "记一笔收入", "short_name": "记账", "url": "/#/incomes", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] },
+        { "name": "和小小花狮聊聊", "short_name": "AI", "url": "/#/ai", "icons": [{ "src": "/icon.png", "sizes": "192x192" }] }
+    ]
+}

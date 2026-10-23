@@ -1,0 +1,56 @@
+name: 功能建议
+description: 想要一个新功能，或者觉得某处可以更好
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提建议前可以先看看 [docs/ROADMAP.md](../blob/main/docs/ROADMAP.md)，
+        说不定已经在计划里了；也欢迎直接在 Discussion 里聊。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题
+      description: 描述场景，不用先想实现方案
+      placeholder: 例如：我想把动物百科生成的学习包直接存成笔记，方便回头复习
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你设想的做法（可选）
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及的模块
+      multiple: true
+      options:
+        - 每日计划
+        - 运动健身
+        - 英语学习
+        - 每日复盘
+        - 随笔笔记
+        - 收入记账
+        - 天气
+        - 智慧花狮（AI）
+        - 动物百科
+        - 智能体 / 提示词
+        - 同步与多设备
+        - 工程化 / 文档
+        - 其它
+  - type: dropdown
+    id: size
+    attributes:
+      label: 你估计的规模
+      options:
+        - 很小（改一个文件）
+        - 中等（动几个文件）
+        - 较大（需要设计讨论）
+  - type: checkboxes
+    id: help
+    attributes:
+      label: 是否愿意参与
+      options:
+        - label: 我可以提 PR
+        - label: 我可以帮忙测试

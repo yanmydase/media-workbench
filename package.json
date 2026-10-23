@@ -1,0 +1,26 @@
+{
+  "name": "media-workbench",
+  "version": "2.8.0",
+  "private": false,
+  "description": "小小花狮 · 个人效率工作台：每日计划 / 运动 / 背单词 / 复盘 / 笔记 / 记账 / 天气，以及 DeepSeek 驱动的 AI 智能体（智慧花狮 · 动物百科）。零依赖、零构建、可离线。",
+  "keywords": ["pwa", "productivity", "deepseek", "ai-agents", "vanilla-js", "education", "cet6", "offline-first"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OWNER/REPO.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OWNER/REPO/issues"
+  },
+  "homepage": "https://github.com/OWNER/REPO#readme",
+  "scripts": {
+    "start": "python server.py",
+    "check": "node tools/check.js",
+    "test": "node tools/test-core.js && node tools/test-sync.js",
+    "deploy": "vercel --prod",
+    "deploy:cf": "wrangler pages deploy . --project-name xiaohuashi"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

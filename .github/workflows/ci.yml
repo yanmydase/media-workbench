@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: 自检与测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 静态自检（语法 / 资源引用 / data-action / 预缓存 / 文档链接）
+        run: node tools/check.js
+
+      - name: 核心逻辑单测（迁移、日期、金额、合并、导入导出）
+        run: node tools/test-core.js
+
+      - name: 多设备同步集成测试（临时启动 server.py）
+        run: node tools/test-sync.js
+        env:
+          PYTHON: python
+
+      - name: 服务端可编译
+        run: python -m py_compile server.py

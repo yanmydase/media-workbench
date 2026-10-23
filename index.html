@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="小小花狮个人工作台：每日打卡、运动、CET-6 背单词、复盘、收入记账、天气与 DeepSeek 智能体。">
+    <meta name="color-scheme" content="light dark">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="小小花狮">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" href="/icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6C5CE7">
+    <title>小小花狮 · 个人工作台</title>
+    <script>
+        /* 首屏主题：在 CSS 加载前决定，避免深色模式闪白 */
+        (function () {
+            try {
+                var pref = localStorage.getItem('xhsh.theme') || 'auto';
+                var dark = pref === 'dark' || (pref === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            } catch (e) { }
+        })();
+    </script>
+    <link rel="stylesheet" href="/css/app.css?v=2.8.0">
+</head>
+<body>
+
+<!-- 移动端侧边栏遮罩 -->
+<div class="sidebar-overlay" id="sidebarOverlay" data-action="close-sidebar"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🦁</div>
+        <span class="logo-text">小小花狮</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">📋 规划与成长</div>
+        <button class="nav-item active" data-page="plan" data-action="nav-page"><span class="nav-icon">📅</span><span class="nav-label">每日计划</span></button>
+        <button class="nav-item" data-page="fitness" data-action="nav-page"><span class="nav-icon">💪</span><span class="nav-label">运动健身</span></button>
+        <button class="nav-item" data-page="english" data-action="nav-page"><span class="nav-icon">📖</span><span class="nav-label">英语学习</span></button>
+        <button class="nav-item" data-page="review" data-action="nav-page"><span class="nav-icon">📝</span><span class="nav-label">每日复盘</span><span class="nav-badge" id="reviewBadge" style="display:none;">未写</span></button>
+        <div class="nav-section">🌟 记录与工具</div>
+        <button class="nav-item" data-page="notes" data-action="nav-page"><span class="nav-icon">🌸</span><span class="nav-label">随笔笔记</span></button>
+        <button class="nav-item" data-page="incomes" data-action="nav-page"><span class="nav-icon">💰</span><span class="nav-label">收入记账</span></button>
+        <button class="nav-item" data-page="weather" data-action="nav-page"><span class="nav-icon">🌤️</span><span class="nav-label">天气</span></button>
+        <div class="nav-section">🤖 AI</div>
+        <button class="nav-item" data-page="ai" data-action="nav-page"><span class="nav-icon">🦁</span><span class="nav-label">智慧花狮</span></button>
+        <button class="nav-item" data-page="zoo" data-action="nav-page"><span class="nav-icon">🐾</span><span class="nav-label">动物百科</span></button>
+        <button class="nav-item" data-page="agents" data-action="nav-page"><span class="nav-icon">🧩</span><span class="nav-label">智能体工作台</span></button>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="nav-item" data-action="toggle-sidebar"><span class="nav-icon">◀</span><span class="nav-label">收起菜单</span></button>
+        <button class="nav-item" id="installBtn" data-action="install-app" style="display:none;"><span class="nav-icon">📲</span><span class="nav-label">安装 App</span></button>
+        <button class="nav-item" id="themeToggle" data-action="toggle-theme"><span class="nav-icon">🌗</span><span class="nav-label">主题：跟随系统</span></button>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-area">
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="menu-toggle" data-action="toggle-sidebar" aria-label="菜单">☰</button>
+            <h1 id="pageTitle">📅 每日计划</h1>
+        </div>
+        <div class="topbar-actions">
+            <button class="icon-btn" id="syncBtn" data-action="sync-now" title="同步状态：点击立即同步（未开启时会打开设置）">☁️</button>
+            <span class="sync-dot" id="syncDot" data-action="sync-open" title="同步状态"></span>
+            <button class="icon-btn" data-action="data-export" title="导出备份">💾</button>
+            <button class="icon-btn" data-action="open-settings" title="设置">⚙️</button>
+        </div>
+    </header>
+
+    <div class="content">
+        <!-- ============ 每日计划 ============ -->
+        <div class="page active" id="page-plan">
+            <div class="card hero-card">
+                <div class="greeting" id="planGreeting"></div>
+                <div class="greeting-date" id="planDate"></div>
+                <div class="motivation">
+                    <div class="motivation-cn" id="motivationCN"></div>
+                    <div class="motivation-en" id="motivationEN"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📅 本月打卡</span>
+                    <div class="row-gap">
+                        <button class="btn btn-xs btn-outline" data-action="plan-nav-month" data-delta="-1" aria-label="上个月">◀</button>
+                        <span id="calMonthLabel" class="cal-month-label"></span>
+                        <button class="btn btn-xs btn-outline" data-action="plan-nav-month" data-delta="1" aria-label="下个月">▶</button>
+                    </div>
+                </div>
+                <div class="cal-grid" id="planCalendar"></div>
+                <div class="legend"><span>🟢 全勤</span><span>🟡 部分</span><span>⚪ 未打卡</span><span>🔍 蓝色=正在查看</span></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title" id="planCardTitle">✅ 今日打卡</span>
+                    <div class="row-gap">
+                        <span id="planProgress" class="progress-text"></span>
+                        <button class="btn btn-xs btn-outline" id="planBackToday" style="display:none;" data-action="plan-back-today">🔙 今天</button>
+                    </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill fill-primary" id="planProgressBar" style="width:0%"></div></div>
+                <div id="planTaskList"></div>
+                <div class="row-gap mt-12">
+                    <button class="btn btn-sm btn-primary" data-action="plan-add-task">+ 新增任务</button>
+                    <button class="btn btn-sm btn-outline" data-action="plan-sleep">⏰ 睡觉提醒</button>
+                    <button class="btn btn-sm btn-outline" data-action="plan-enable-notify">🔔 开启通知</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ 运动健身 ============ -->
+        <div class="page" id="page-fitness">
+            <div class="stats-grid" id="fitnessStats"></div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🏋️ 今日运动</span>
+                    <button class="btn btn-sm btn-primary" data-action="fitness-add">+ 记录</button>
+                </div>
+                <div id="exerciseList"></div>
+            </div>
+            <div class="card">
+                <div class="card-title mb-10">📊 近 7 天运动时长（分钟）</div>
+                <div id="fitnessChart" class="bar-chart"></div>
+                <div class="chart-labels" id="fitnessChartLabels"></div>
+            </div>
+        </div>
+
+        <!-- ============ 英语学习 ============ -->
+        <div class="page" id="page-english">
+            <div class="stats-grid" id="engStats"></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📖 今日学习</span>
+                    <span id="engTodayProgress" class="progress-text"></span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill fill-success" id="engProgressBar" style="width:0%"></div></div>
+                <div id="engTodayPlan" class="eng-plan-hint"></div>
+                <div id="engWordList"></div>
+            </div>
+
+            <div class="card" id="engReviewCard" style="display:none;">
+                <div class="card-header">
+                    <span class="card-title">🔄 今日复习</span>
+                    <span class="card-badge badge-primary" id="engReviewCount"></span>
+                </div>
+                <div id="engReviewList"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📕 易错词本</span>
+                    <span class="card-badge badge-primary" id="engErrorCount">0 个</span>
+                </div>
+                <div id="engErrorList"></div>
+            </div>
+        </div>
+
+        <!-- ============ 每日复盘 ============ -->
+        <div class="page" id="page-review">
+            <div class="card">
+                <div class="card-title mb-10">📝 今日复盘</div>
+                <textarea class="input" id="reviewToday" placeholder="今天完成了什么？有什么收获？哪里可以改进？" style="min-height:140px;resize:vertical;"></textarea>
+                <div class="draft-hint">草稿会自动保存在本机</div>
+            </div>
+            <div class="card">
+                <div class="card-title mb-10">😊 今日心情</div>
+                <div class="chip-group" id="moodSelector">
+                    <span class="chip" data-mood="😄" data-action="review-mood">😄 超棒</span>
+                    <span class="chip" data-mood="🙂" data-action="review-mood">🙂 不错</span>
+                    <span class="chip" data-mood="😐" data-action="review-mood">😐 一般</span>
+                    <span class="chip" data-mood="😔" data-action="review-mood">😔 低落</span>
+                    <span class="chip" data-mood="😤" data-action="review-mood">😤 烦躁</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title mb-10">💡 感恩三件事</div>
+                <textarea class="input mb-8" id="gratitude1" placeholder="1. 今天感恩的事…" style="min-height:52px;resize:vertical;"></textarea>
+                <textarea class="input mb-8" id="gratitude2" placeholder="2. 今天感恩的事…" style="min-height:52px;resize:vertical;"></textarea>
+                <textarea class="input" id="gratitude3" placeholder="3. 今天感恩的事…" style="min-height:52px;resize:vertical;"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" data-action="review-save">💾 保存复盘</button>
+            <div class="card mt-14">
+                <div class="card-title mb-10">📜 历史复盘（最近 30 条，点击查看）</div>
+                <div id="reviewHistory"></div>
+            </div>
+        </div>
+
+        <!-- ============ 随笔笔记 ============ -->
+        <div class="page" id="page-notes">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🌸 我的随笔 <span class="card-badge badge-primary" id="noteCount">0 条</span></span>
+                    <button class="btn btn-sm btn-primary" data-action="note-create">+ 新建</button>
+                </div>
+                <input class="input" placeholder="🔍 搜索标题 / 内容 / 标签" data-action-change="note-search">
+            </div>
+            <div id="noteList"></div>
+        </div>
+
+        <!-- ============ 收入记账 ============ -->
+        <div class="page" id="page-incomes">
+            <div class="card hero-income">
+                <div class="income-title">💰 我的收入</div>
+                <div class="income-stats">
+                    <div><div class="income-label">本月</div><div class="income-value" id="incomeMonth">¥0</div></div>
+                    <div class="divider"></div>
+                    <div><div class="income-label">今日</div><div class="income-value" id="incomeToday">¥0</div></div>
+                    <div class="divider"></div>
+                    <div><div class="income-label">累计</div><div class="income-value" id="incomeTotal">¥0</div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title mb-10">📝 快速记录</div>
+                <div class="col-gap">
+                    <input class="input" id="incomeSource" placeholder="收入来源（写稿、设计、兼职…）">
+                    <div class="row-gap">
+                        <input class="input" id="incomeAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="金额（元）">
+                        <button class="btn btn-primary" data-action="income-add">💾 记录</button>
+                    </div>
+                    <div class="row-gap inline-label">
+                        <span>📅 日期</span>
+                        <input type="date" class="input" id="incomeDate">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📅 收入日历</span>
+                    <div class="row-gap">
+                        <button class="btn btn-xs btn-outline" data-action="income-nav-month" data-delta="-1">◀</button>
+                        <span id="incomeCalLabel" class="cal-month-label"></span>
+                        <button class="btn btn-xs btn-outline" data-action="income-nav-month" data-delta="1">▶</button>
+                    </div>
+                </div>
+                <div class="cal-grid" id="incomeCalendar"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title mb-10">📋 收入记录</div>
+                <div id="incomeList"></div>
+            </div>
+        </div>
+
+        <!-- ============ 天气 ============ -->
+        <div class="page" id="page-weather">
+            <div class="weather-main">
+                <div class="weather-icon" id="weatherIcon">☀️</div>
+                <div class="weather-temp" id="weatherTemp">--°</div>
+                <div class="weather-desc" id="weatherDesc">加载中…</div>
+                <div class="weather-loc" id="weatherLoc"></div>
+                <div class="weather-detail">
+                    <div><div class="wd-label">💧 湿度</div><div id="weatherHumidity">--%</div></div>
+                    <div><div class="wd-label">🌬️ 风速</div><div id="weatherWind">--</div></div>
+                    <div><div class="wd-label">👁️ 能见度</div><div id="weatherVis">--</div></div>
+                    <div><div class="wd-label">🌅 紫外线</div><div id="weatherUV">--</div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="row-gap">
+                    <input class="input" id="weatherCity" placeholder="城市名（中文或拼音，如 上海 / shanghai）">
+                    <button class="btn btn-primary btn-sm" data-action="weather-refresh">🔍</button>
+                    <button class="btn btn-outline btn-sm" data-action="weather-locate">📍</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title mb-10">📅 近 7 天预报</div>
+                <div id="forecast7" class="forecast"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title mb-10">👔 今日穿搭建议</div>
+                <div class="advice" id="clothingAdvice"></div>
+            </div>
+            <div class="card">
+                <div class="card-title mb-10">🍽️ 今日饮食建议</div>
+                <div class="advice" id="dietAdvice"></div>
+            </div>
+        </div>
+
+        <!-- ============ AI 对话 ============ -->
+        <div class="page" id="page-ai">
+            <div class="card ai-header">
+                <div class="ai-avatar">🦁</div>
+                <div class="ai-heading">
+                    <div class="ai-name">小小花狮 · <span id="aiAgentTitle">写作助手</span></div>
+                    <div class="ai-desc" id="aiAgentDesc"></div>
+                </div>
+            </div>
+
+            <!-- 模型条：当前模型 + 连接状态，点"模型"可切换/重新配置 -->
+            <div class="model-bar" id="aiModelBar"></div>
+
+            <!-- 未配置 Key 时直接出现在这里（不弹窗） -->
+            <div class="card setup-card" id="aiSetup" style="display:none;"></div>
+
+            <div class="agent-bar" id="aiAgentBar"></div>
+
+            <div class="card">
+                <div class="chip-group" id="aiModes"></div>
+                <div class="chat-thread" id="aiThread"></div>
+                <div class="starters" id="aiStarters"></div>
+                <textarea class="input" id="aiPrompt" placeholder="想聊点什么…" style="min-height:88px;resize:vertical;margin-top:10px;"></textarea>
+                <div class="row-gap mt-10">
+                    <button class="btn btn-primary btn-block" data-action="ai-send" id="aiGenBtn">🚀 发送</button>
+                    <button class="btn btn-outline btn-sm" data-action="ai-stop" id="aiStopBtn" style="display:none;">⏹️ 停止</button>
+                    <button class="btn btn-outline btn-sm" data-action="ai-clear" title="清空今天的对话">🧹</button>
+                </div>
+                <div id="aiQuotaWarn" class="quota-warn" style="display:none;"></div>
+            </div>
+
+            <details class="card history-card">
+                <summary>📜 生成历史（点击复用提示词）</summary>
+                <div id="aiHistory" class="mt-10"></div>
+            </details>
+        </div>
+        <!-- ============ 动物百科 ============ -->
+        <div class="page" id="page-zoo">
+            <div class="card zoo-head">
+                <div class="zoo-head-left">
+                    <div class="ai-name">🐾 动物百科</div>
+                    <div class="muted small">输入一个动物名字，生成沉浸式博物学习包：基础卡片 · 生存剧本 · 生态位图谱 · 趣味思考题</div>
+                </div>
+                <div class="zoo-search">
+                    <input class="input" id="zooInput" placeholder="输入动物名字，如：小熊猫 / 水獭 / 雪豹" autocomplete="off">
+                    <button class="btn btn-primary" data-action="zoo-gen" id="zooGenBtn">🌿 生成学习包</button>
+                </div>
+                <div class="model-bar" id="zooModelBar"></div>
+                <div class="card setup-card" id="zooKeyPanel" style="display:none;"></div>
+                <div class="zoo-loading" id="zooLoading" style="display:none;">
+                    <div class="zoo-spinner"></div>
+                    <div class="small muted">正在为它搭建学习包：查分类 → 写剧本 → 画生态位 → 出思考题…</div>
+                </div>
+            </div>
+            <div class="zoo-history" id="zooHistory"></div>
+            <div id="zooResult"></div>
+        </div>
+        <!-- ============ 智能体工作台 ============ -->
+        <div class="page" id="page-agents">
+            <div class="card agent-intro">
+                <div class="card-title">🧩 智能体工作台</div>
+                <div class="muted small mt-6">
+                    每个智能体 = 一段专属人设 + 可选的数据工具。这里还是一片空地：你可以自己创建，也可以从
+                    <code>js/agents/registry.js</code> 的 <code>BUILTIN</code> 里加新的内置智能体。
+                </div>
+                <div class="card-header mt-12">
+                    <span class="progress-text" id="agentCount">0 个智能体</span>
+                    <div class="row-gap">
+                        <button class="btn btn-xs btn-outline" data-action="agent-import">📥 导入</button>
+                        <button class="btn btn-xs btn-outline" data-action="agent-export">📤 导出</button>
+                        <button class="btn btn-xs btn-primary" data-action="agent-create">＋ 新建</button>
+                    </div>
+                </div>
+                <div class="agent-grid" id="agentGrid"></div>
+                <div class="agent-disabled" id="agentDisabled"></div>
+            </div>
+            <div class="card">
+                <div class="card-title mb-10">🧰 可用的数据工具</div>
+                <div class="muted small">创建智能体时可选择以下只读工具，让智能体"看到"你的数据（只随本次对话发送给模型，不会单独上传）：</div>
+                <ul class="tool-list">
+                    <li><b>📊 综合统计</b>：今日运动、累计单词、本月收入</li>
+                    <li><b>🪞 最近复盘</b>：最近 5 条复盘摘要</li>
+                    <li><b>💪 近 7 天运动</b>：按天列出运动明细</li>
+                    <li><b>✅ 今日打卡</b>：今天的任务完成状态</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<!-- 脚本顺序：核心 → 路由 → 数据工具 → 智能体 → 各业务模块 → 启动 -->
+<script>
+/* 启动自检：脚本没加载成功 → 自动清缓存并重载一次（老版本缓存混搭时最有用） */
+(function () {
+    var KEY = 'xhsh.selfheal';
+    window.__xhshBootOk = false;
+    function heal(why) {
+        try {
+            if (sessionStorage.getItem(KEY) === '1') return;   // 同一次打开只自愈一次，避免死循环
+            sessionStorage.setItem(KEY, '1');
+        } catch (e) { }
+        var done = function () { location.reload(); };
+        try {
+            if (window.caches && caches.keys) {
+                caches.keys().then(function (ks) {
+                    return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+                }).then(function () {
+                    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+                        return navigator.serviceWorker.getRegistrations().then(function (rs) {
+                            return Promise.all(rs.map(function (r) { return r.unregister(); }));
+                        });
+                    }
+                }).then(done, done);
+                return;
+            }
+        } catch (e) { }
+        done();
+    }
+    window.addEventListener('error', function (e) {
+        var src = String(e.filename || '') + String((e.target && e.target.src) || '');
+        if (/\/js\//.test(src) && !window.__xhshBootOk) heal('脚本加载失败：' + src);
+    }, true);
+    // 兜底：2.5 秒后如果动都没动，说明脚本没跑起来
+    setTimeout(function () {
+        if (!window.XHSH || !window.XHSH.router) heal('启动超时');
+    }, 2500);
+    // 正常启动后清掉"已自愈"标记，下次真出问题还能再救一次
+    window.addEventListener('load', function () {
+        if (window.__xhshBootOk) { try { sessionStorage.removeItem(KEY); } catch (e) { } }
+    });
+})();
+</script>
+<script src="/js/modules/core.js?v=2.8.0"></script>
+<script src="/js/modules/router.js?v=2.8.0"></script>
+<script src="/js/modules/data.js?v=2.8.0"></script>
+<script src="/js/agents/registry.js?v=2.8.0"></script>
+<script src="/js/agents/workbench.js?v=2.8.0"></script>
+<script src="/js/modules/cet6-words.js?v=2.8.0"></script>
+<script src="/js/modules/plan.js?v=2.8.0"></script>
+<script src="/js/modules/fitness.js?v=2.8.0"></script>
+<script src="/js/modules/english.js?v=2.8.0"></script>
+<script src="/js/modules/review.js?v=2.8.0"></script>
+<script src="/js/modules/notes.js?v=2.8.0"></script>
+<script src="/js/modules/incomes.js?v=2.8.0"></script>
+<script src="/js/modules/weather.js?v=2.8.0"></script>
+<script src="/js/modules/illustrate.js?v=2.8.0"></script>
+<script src="/js/modules/ai-client.js?v=2.8.0"></script>
+<script src="/js/agents/wisdom.js?v=2.8.0"></script>
+<script src="/js/agents/zoo.js?v=2.8.0"></script>
+<script src="/js/modules/sync.js?v=2.8.0"></script>
+<script src="/js/app.js?v=2.8.0"></script>
+</body>
+</html>

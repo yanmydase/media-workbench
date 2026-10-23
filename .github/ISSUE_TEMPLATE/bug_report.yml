@@ -1,0 +1,75 @@
+name: Bug 报告
+description: 有东西不正常 —— 请尽量把"怎么复现"写清楚
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！提交前请先确认：
+        - 已用**最新代码**（`git pull`）并 **Ctrl+Shift+R 强制刷新** 过；
+        - Issue 列表里没有重复；
+        - **不要贴真实的 API Key、口令或私人数据**。
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 实际看到的现象，越具体越好（界面文字、页面名、报错原文）
+      placeholder: 例如：点击侧边栏「动物百科」后，页面回到了「每日计划」
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: 你期望的结果
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 用 python server.py 打开 http://localhost:8080
+        2. 点 ⚙️ 填入 Key 并测试连接
+        3. 点左侧「动物百科」
+        4. 看到…
+    validations:
+      required: true
+  - type: dropdown
+    id: page
+    attributes:
+      label: 相关页面
+      multiple: true
+      options:
+        - 每日计划
+        - 运动健身
+        - 英语学习
+        - 每日复盘
+        - 随笔笔记
+        - 收入记账
+        - 天气
+        - 智慧花狮（AI 对话）
+        - 动物百科
+        - 智能体工作台
+        - 设置 / 同步
+        - 其它
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      description: 浏览器 + 系统 + 版本号（页脚/仓库的版本 tag）+ 是否用 PWA 安装
+      placeholder: Chrome 141 / Windows 11 / v2.8.0 / 未安装 PWA
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: 控制台报错（F12 → Console，红字原文）
+      render: shell
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我已确认内容中不含 API Key、口令或他人的私人数据
+          required: true

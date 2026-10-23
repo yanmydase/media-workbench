@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 想法与讨论
+    url: https://github.com/OWNER/REPO/discussions
+    about: 不确定是不是 bug、想聊聊方向，来这里更合适
+  - name: 🔐 安全漏洞
+    url: https://github.com/OWNER/REPO/security/advisories/new
+    about: 请勿在公开 Issue 中披露漏洞细节或密钥
