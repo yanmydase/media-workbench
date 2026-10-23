@@ -1,8 +1,7 @@
-blank_issues_enabled: false
+﻿blank_issues_enabled: false
 contact_links:
-  - name: 💬 想法与讨论
-    url: https://github.com/OWNER/REPO/discussions
-    about: 不确定是不是 bug、想聊聊方向，来这里更合适
-  - name: 🔐 安全漏洞
-    url: https://github.com/OWNER/REPO/security/advisories/new
-    about: 请勿在公开 Issue 中披露漏洞细节或密钥
+  - name: 馃挰 鎯虫硶涓庤璁?    url: https://github.com/yanmydase/media-workbench/discussions
+    about: 涓嶇‘瀹氭槸涓嶆槸 bug銆佹兂鑱婅亰鏂瑰悜锛屾潵杩欓噷鏇村悎閫?  - name: 馃攼 瀹夊叏婕忔礊
+    url: https://github.com/yanmydase/media-workbench/security/advisories/new
+    about: 璇峰嬁鍦ㄥ叕寮€ Issue 涓姭闇叉紡娲炵粏鑺傛垨瀵嗛挜
+
