@@ -2,7 +2,7 @@
   "name": "media-workbench",
   "version": "2.8.0",
   "private": false,
-  "description": "灏忓皬鑺辩嫯 路 涓汉鏁堢巼宸ヤ綔鍙帮細姣忔棩璁″垝 / 杩愬姩 / 鑳屽崟璇?/ 澶嶇洏 / 绗旇 / 璁拌处 / 澶╂皵锛屼互鍙?DeepSeek 椹卞姩鐨?AI 鏅鸿兘浣擄紙鏅烘収鑺辩嫯 路 鍔ㄧ墿鐧剧锛夈€傞浂渚濊禆銆侀浂鏋勫缓銆佸彲绂荤嚎銆?,
+  "description": "小小花狮 · 个人效率工作台：每日计划 / 运动 / 背单词 / 复盘 / 笔记 / 记账 / 天气，以及 DeepSeek 驱动的 AI 智能体（智慧花狮 · 动物百科）。零依赖、零构建、可离线。",
   "keywords": ["pwa", "productivity", "deepseek", "ai-agents", "vanilla-js", "education", "cet6", "offline-first"],
   "license": "MIT",
   "repository": {
